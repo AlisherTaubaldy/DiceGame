@@ -25,7 +25,6 @@ class GameLogic {
                 exit(0);
             } elseif ($userGuess === '?') {
                 $this->ui->showHelp($dice);
-                // После показа помощи пользователь должен снова выбрать
                 continue;
             }
 
@@ -33,7 +32,6 @@ class GameLogic {
             $this->ui->displayMessage($userFirst ? "You guessed right! You go first." : "Wrong guess! I go first.\n");
             $this->ui->displayMessage("My selection: $computerValue (KEY=" . $this->random->revealKey() . ").");
 
-            // Переход к выбору кубиков
             $this->chooseDice($dice, $userFirst);
             break;
         }
@@ -42,40 +40,33 @@ class GameLogic {
 
     private function chooseDice(array $dice, bool $userFirst): void {
         if ($userFirst) {
-            // Пользователь делает первый выбор
             $this->ui->displayMessage("You make the first move.");
             $this->ui->displayDiceChoices($dice);
             $userChoice = (int)$this->ui->getUserInput("Your choice:");
 
-            // Удаляем выбор пользователя из массива
             $userDice = $dice[$userChoice];
             unset($dice[$userChoice]);
-            $dice = array_values($dice); // Перенумеровываем индексы
+            $dice = array_values($dice);
 
-            // Компьютер выбирает случайный кубик из оставшихся
             $computerChoice = random_int(0, count($dice) - 1);
             $computerDice = $dice[$computerChoice];
             $this->ui->displayMessage("You choose the [" . implode(',', $computerDice->getFaces()) . "] dice.");
             $this->ui->displayMessage("You choose the [" . implode(',', $userDice->getFaces()) . "] dice.");
 
         } else {
-            // Компьютер делает первый выбор
             $computerChoice = random_int(0, count($dice) - 1);
             $computerDice = $dice[$computerChoice];
             $this->ui->displayMessage("I make the first move and choose the " . implode(',', $computerDice->getFaces()) . " dice. I choose dice $computerChoice.");
 
-            // Удаляем выбор компьютера из массива
             unset($dice[$computerChoice]);
-            $dice = array_values($dice); // Перенумеровываем индексы
+            $dice = array_values($dice);
 
-            // Пользователь делает выбор из оставшихся
             $this->ui->displayDiceChoices($dice);
             $userChoice = (int)$this->ui->getUserInput("Your selection:");
             $userDice = $dice[$userChoice];
             $this->ui->displayMessage("You choose the " . implode(',', $userDice->getFaces()) . " dice.");
         }
 
-        // Передаём выбранные кубики в раунд
         $this->playRound($userDice, $computerDice, $userFirst);
     }
 

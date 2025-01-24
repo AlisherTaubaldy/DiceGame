@@ -11,11 +11,10 @@ class Validators
 
     public static function isInvalidIntValue(array $faces): bool {
         foreach ($faces as $face) {
-            // Проверяем, что значение числовое и является целым числом
             if ((int)$face != $face) {
-                return true; // Найдено некорректное значение
+                return true;
             }
         }
-        return false; // Все значения корректны
+        return false;
     }
 }
